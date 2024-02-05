@@ -1,0 +1,93 @@
+.__crx-app {
+  position: fixed;
+  z-index: 2000;
+}
+.crx-jj-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2001;
+  background-color: var(--juejin-mask-1);
+}
+.crx-jj-container {
+  width: 500px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: var(--juejin-layer-1);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.arco-spin {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.arco-list-item {
+  padding: 0 16px;
+}
+.arco-empty-image {
+  font-size: 1rem;
+}
+.jj-tea-form {
+  flex: 1;
+  overflow-y: auto;
+}
+
+svg.arco-icon {
+  font-size: 1.5rem;
+}
+
+.a-button {
+  padding: 0.4rem 1rem;
+  font-size: 1.16rem;
+  line-height: 2rem;
+  text-align: center;
+  color: var(--juejin-font-white);
+  background-color: var(--juejin-brand-1-normal);
+  border-radius: 3px;
+  transition: background-color 0.1s linear 0.05s;
+  flex-shrink: 0;
+  white-space: nowrap;
+  &:hover {
+    background-color: var(--juejin-brand-2-hover);
+    cursor: pointer;
+  }
+  &.a-button-long {
+    width: 100%;
+  }
+  & + .a-button.a-button-long {
+    margin-top: 10px;
+    margin-left: 0;
+  }
+}
+.form-footer,
+.a-button {
+  box-sizing: border-box;
+  & + .a-button {
+    margin-top: 0;
+    margin-left: 10px;
+  }
+}
+.form-footer {
+  display: flex;
+  padding: 0 20px 20px 20px;
+  flex-direction: column;
+  &.align-right {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+.jj-tea-form {
+  padding: 0 20px 20px 20px;
+  box-sizing: border-box;
+}
+.arco-modal-body pre {
+  white-space: pre-wrap;
+}

@@ -1,0 +1,29 @@
+{
+  "name": "每日掘金小助手",
+  "description": "A Chrome extension for daily-juejin-tea helper.",
+  "version": "1.0.0",
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {},
+  "background": {
+    "service_worker": "./background/worker.ts",
+    "type": "module"
+  },
+  "content_scripts": [{
+    "matches": ["https://juejin.cn/**"],
+    "js": [ "content-scripts/content.ts"]
+  }],
+  "web_accessible_resources": [{
+    "matches": ["https://juejin.cn/*"],
+    "resources": ["assets/*"]
+  }],
+  "permissions": ["activeTab", "tabs", "webRequest", "clipboardWrite", "storage"],
+  "host_permissions": [
+    "https://api.juejin.cn/*",
+    "https://api.xiaomark.com/*"
+  ],
+  "manifest_version": 3
+}
