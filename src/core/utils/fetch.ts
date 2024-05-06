@@ -3,7 +3,7 @@ type FetchParams = Record<string, unknown>;
 export const fetchGet = async (url: string, params: FetchParams = {}) => {
   const firstUrl = url;
   let paramsUrl = "?";
-  for (let key in params) {
+  for (const key in params) {
     paramsUrl += `${key}=${params[key]}&`;
   }
   return await fetch(`${firstUrl}${paramsUrl}`, {
@@ -19,11 +19,11 @@ export const fetchGet = async (url: string, params: FetchParams = {}) => {
 export const fetchPost = async (
   url: string,
   params: FetchParams = {},
-  data?: unknown
+  data?: unknown,
 ) => {
   const firstUrl = url;
   let paramsUrl = "?";
-  for (let key in params) {
+  for (const key in params) {
     paramsUrl += `${key}=${params[key]}&`;
   }
   return await fetch(`${firstUrl}${paramsUrl}`, {

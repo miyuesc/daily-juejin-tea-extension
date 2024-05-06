@@ -1,5 +1,7 @@
 import {
+  addActionClickListener,
   addRuntimeMsgListener,
+  initMessageBus,
   runtimeListenersMap,
   RuntimeMsg,
 } from "@/core/utils/messageBus";
@@ -11,13 +13,16 @@ import {
 } from "@/core/utils/functions";
 import { getPanelStatus, setPanelStatus } from "@/core/store";
 
+console.log(chrome);
+
 // /////////// 侧边栏显示控制
 const toggleTab = (tab?: chrome.tabs.Tab) => {
   const newStatus = !getPanelStatus();
+  chrome.tabs?.sendMessage(tab!.id!, { action: "toggle", body: newStatus });
   setPanelStatus(newStatus);
-  chrome.tabs?.sendMessage(tab?.id!, { action: "toggle", body: newStatus });
 };
-chrome.action.onClicked.addListener(toggleTab);
+// chrome.action.onClicked.addListener(toggleTab);
+addActionClickListener(toggleTab);
 
 // ///////////////////////// 消息事件
 addRuntimeMsgListener("getTabsInfo", (request, sender, sendResponse) => {
@@ -37,13 +42,4 @@ addRuntimeMsgListener("setStorage", (request, sender, sendResponse) => {
 });
 
 // 注册 worker 相关的事件监听器
-chrome.runtime.onMessage.addListener(
-  (message: RuntimeMsg, sender, sendResponse) => {
-    if (runtimeListenersMap[message.action]) {
-      runtimeListenersMap[message.action](message, sender, sendResponse);
-    } else {
-      sendResponse(null);
-    }
-    return true;
-  }
-);
+initMessageBus("background");

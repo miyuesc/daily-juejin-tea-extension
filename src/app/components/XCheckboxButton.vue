@@ -61,7 +61,7 @@ const changeCheckedValue = (op: CheckboxOption) => {
   }
   if ((computedValue.value as CheckboxValues).includes(op.value)) {
     computedValue.value = (computedValue.value as CheckboxValues).filter(
-      (i) => i !== op.value
+      (i) => i !== op.value,
     );
   } else {
     (computedValue.value as CheckboxValues).push(op.value);

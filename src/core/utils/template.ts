@@ -5,7 +5,7 @@ import { typeLabelMap } from "@/core/utils/enums";
 export const msgItemGenerator = (
   idx: number,
   title: string,
-  shortLink: string
+  shortLink: string,
 ) => {
   return `${idx + 1}. ${title}
 ${shortLink}
@@ -14,13 +14,13 @@ ${shortLink}
 
 export const messageGenerator = (
   type: keyof typeof typeLabelMap,
-  msgArr: MessageItem[]
+  msgArr: MessageItem[],
 ) => {
   return `[咖啡]酱酱的${typeLabelMap[type]}下午茶来啦~
 【今日干货】
 ${msgArr
   .map((msgItem, idx) =>
-    msgItemGenerator(idx, msgItem.title, msgItem.shortLink)
+    msgItemGenerator(idx, msgItem.title, msgItem.shortLink),
   )
   .join("")}【总览 - 每日掘金】
 https://sourl.co/iKiPJh`;
@@ -34,7 +34,7 @@ export const messageBody = (msgArr: MessageItem[]) => {
   return `【今日干货】
 ${msgArr
   .map((msgItem, idx) =>
-    msgItemGenerator(idx, msgItem.title, msgItem.shortLink)
+    msgItemGenerator(idx, msgItem.title, msgItem.shortLink),
   )
   .join("")}【总览 - 每日掘金】
 https://sourl.co/iKiPJh`;
@@ -46,7 +46,7 @@ export const tableItemGenerator = (item: MessageItem & { link: string }) => {
 `;
 };
 export const tableContentGenerator = (
-  msgArr: (MessageItem & { link: string })[]
+  msgArr: (MessageItem & { link: string })[],
 ) => {
   return `${msgArr.map((item) => tableItemGenerator(item)).join("")}`;
 };

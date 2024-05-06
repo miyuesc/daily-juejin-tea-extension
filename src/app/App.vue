@@ -205,12 +205,11 @@ const getTabsInfo = () => {
   hasSuccess.value = false;
   onLoading.value = true;
   fireRuntimeMsgListener(
-    "getTabsInfo",
     { action: "getTabsInfo" },
     (res: ProcessTabsResult) => {
       jjForm.value.links = res.links;
       onLoading.value = false;
-    }
+    },
   );
 };
 
@@ -224,25 +223,23 @@ const removeLinkItem = (idx: number) => {
 
 const changeStorage = (value: string) => {
   console.log({ "message-type": value });
-  fireRuntimeMsgListener("setStorage", {
+  fireRuntimeMsgListener({
     action: "setStorage",
     body: { "message-type": value },
   });
 };
 
 fireRuntimeMsgListener(
-  "getStorage",
   { action: "getStorage", body: { key: "message-type" } },
   (res: any) => {
     jjForm.value.type = res || "frontend";
-  }
+  },
 );
 
 const generateShortLink = async () => {
   try {
     onLoading.value = true;
     fireRuntimeMsgListener(
-      "generateShortLink",
       {
         action: "generateShortLink",
         body: jjForm.value.links,
@@ -259,7 +256,7 @@ const generateShortLink = async () => {
           }
         }
         hasSuccess.value = true;
-      }
+      },
     );
   } catch (e) {
     console.error(e);
@@ -286,7 +283,6 @@ const submitForm = () => {
   onFormLoading.value = true;
   if (!modelForm.value.link.includes("sourl.co")) {
     fireRuntimeMsgListener(
-      "generateShortLink",
       {
         action: "generateShortLink",
         body: [{ link: modelForm.value.link }],
@@ -298,7 +294,7 @@ const submitForm = () => {
         }
         modelForm.value.link = res[0].data?.link?.url ?? modelForm.value.link;
         setMessagePart();
-      }
+      },
     );
   } else {
     setMessagePart();
@@ -312,7 +308,7 @@ const setMessagePart = () => {
       afternoonTeaContent.value.activities = [];
     }
     afternoonTeaContent.value.activities.push(
-      `${modelForm.value.content}\n${modelForm.value.link}`
+      `${modelForm.value.content}\n${modelForm.value.link}`,
     );
   }
   onFormLoading.value = false;
@@ -339,7 +335,7 @@ const copyToClipboard = async (type: "text" | "table") => {
   if (type === "table") {
     window.open(
       "https://bytedance.feishu.cn/sheets/shtcn6eVLKMUE5FFfnoLFYfPEOw",
-      "__blank"
+      "__blank",
     );
   }
 };

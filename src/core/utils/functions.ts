@@ -33,7 +33,7 @@ export const processJuejinPostTabs = (callback: ProcessTabsCallback) => {
     function (tabs) {
       const { urls, titles, links } = formatTabs(tabs);
       callback({ urls, titles, links, tabs });
-    }
+    },
   );
 };
 
@@ -53,7 +53,7 @@ export const processShortLink = async (request: any, sendResponse: any) => {
 
 export const copyContentToClipboard = async (
   request: any,
-  sendResponse: any
+  sendResponse: any,
 ) => {
   try {
     const clipboardPermission = await chrome.permissions.contains({
