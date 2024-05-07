@@ -20,11 +20,15 @@ export const addRuntimeMsgListener = (
   runtimeListenersMap[action].push(listener);
 };
 export const fireRuntimeMsgListener = <T>(
-  msg: RuntimeMsg,
+  action: RuntimeMsg["action"],
+  body: RuntimeMsg["body"],
   callback?: (res: T) => void,
 ) => {
   if (!chrome?.runtime?.sendMessage) return;
-  chrome.runtime.sendMessage(msg, callback ?? (() => {}));
+  chrome.runtime.sendMessage({ action, body }, (response) => {
+    const res = callback?.(response);
+    return res || true;
+  });
 };
 export const removeRuntimeMsgListener = (
   action: string,
@@ -53,23 +57,23 @@ export const fireTabsMsgListener = <T>(
   callback?: (res: T) => void,
 ) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id!, msg, callback ?? (() => {}));
+    chrome.tabs.sendMessage(tabs[0].id!, msg, (response) => {
+      const res = callback?.(response);
+      return res || true;
+    });
   });
 };
 
 //
-export type ActionClickListener = (tab: chrome.tabs.Tab) => void;
-export type ActionClickMsg = {
-  action: keyof typeof tabsListenersMap;
-  body?: unknown;
-};
+export type ActionClickListener = (
+  tab: chrome.tabs.Tab,
+) => Promise<unknown> | undefined;
 export const ActionClickListeners: ActionClickListener[] = [];
 export const addActionClickListener = (listener: ActionClickListener) => {
   ActionClickListeners.push(listener);
 };
 
-export type MessageBusType = "popup" | "background" | "content" | "devtools";
-export const initMessageBus = (type: MessageBusType) => {
+export const initMessageBus = () => {
   chrome.runtime?.onMessage.addListener(
     (message: RuntimeMsg, sender, sendResponse) => {
       if (runtimeListenersMap[message.action]) {
@@ -79,10 +83,9 @@ export const initMessageBus = (type: MessageBusType) => {
       } else {
         sendResponse(null);
       }
-      return true;
     },
   );
   chrome.action?.onClicked.addListener((tab) => {
-    ActionClickListeners.forEach((fc) => fc(tab));
+    ActionClickListeners.forEach(async (fc) => await fc(tab));
   });
 };

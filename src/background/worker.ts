@@ -2,8 +2,6 @@ import {
   addActionClickListener,
   addRuntimeMsgListener,
   initMessageBus,
-  runtimeListenersMap,
-  RuntimeMsg,
 } from "@/core/utils/messageBus";
 import {
   getStorage,
@@ -16,9 +14,12 @@ import { getPanelStatus, setPanelStatus } from "@/core/store";
 console.log(chrome);
 
 // /////////// 侧边栏显示控制
-const toggleTab = (tab?: chrome.tabs.Tab) => {
+const toggleTab = async (tab?: chrome.tabs.Tab) => {
   const newStatus = !getPanelStatus();
-  chrome.tabs?.sendMessage(tab!.id!, { action: "toggle", body: newStatus });
+  await chrome.tabs?.sendMessage(tab!.id!, {
+    action: "toggle",
+    body: newStatus,
+  });
   setPanelStatus(newStatus);
 };
 // chrome.action.onClicked.addListener(toggleTab);
@@ -42,4 +43,4 @@ addRuntimeMsgListener("setStorage", (request, sender, sendResponse) => {
 });
 
 // 注册 worker 相关的事件监听器
-initMessageBus("background");
+initMessageBus();

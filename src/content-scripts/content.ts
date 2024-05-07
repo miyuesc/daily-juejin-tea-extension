@@ -35,4 +35,4 @@ const toggleListener = (request: any) => {
 
 addRuntimeMsgListener("toggle", toggleListener);
 
-initMessageBus("content");
+initMessageBus();

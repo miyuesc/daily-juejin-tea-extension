@@ -204,13 +204,10 @@ const modelForm = ref<Record<"link" | "content" | "type", string>>({
 const getTabsInfo = () => {
   hasSuccess.value = false;
   onLoading.value = true;
-  fireRuntimeMsgListener(
-    { action: "getTabsInfo" },
-    (res: ProcessTabsResult) => {
-      jjForm.value.links = res.links;
-      onLoading.value = false;
-    },
-  );
+  fireRuntimeMsgListener("getTabsInfo", undefined, (res: ProcessTabsResult) => {
+    jjForm.value.links = res.links;
+    onLoading.value = false;
+  });
 };
 
 const removeLinkItem = (idx: number) => {
@@ -223,27 +220,19 @@ const removeLinkItem = (idx: number) => {
 
 const changeStorage = (value: string) => {
   console.log({ "message-type": value });
-  fireRuntimeMsgListener({
-    action: "setStorage",
-    body: { "message-type": value },
-  });
+  fireRuntimeMsgListener("setStorage", { "message-type": value });
 };
 
-fireRuntimeMsgListener(
-  { action: "getStorage", body: { key: "message-type" } },
-  (res: any) => {
-    jjForm.value.type = res || "frontend";
-  },
-);
+fireRuntimeMsgListener("getStorage", { key: "message-type" }, (res: any) => {
+  jjForm.value.type = res || "frontend";
+});
 
 const generateShortLink = async () => {
   try {
     onLoading.value = true;
     fireRuntimeMsgListener(
-      {
-        action: "generateShortLink",
-        body: jjForm.value.links,
-      },
+      "generateShortLink",
+      jjForm.value.links,
       (res: any[]) => {
         onLoading.value = false;
         if (!res || !res.length) {
@@ -283,10 +272,8 @@ const submitForm = () => {
   onFormLoading.value = true;
   if (!modelForm.value.link.includes("sourl.co")) {
     fireRuntimeMsgListener(
-      {
-        action: "generateShortLink",
-        body: [{ link: modelForm.value.link }],
-      },
+      "generateShortLink",
+      [{ link: modelForm.value.link }],
       (res: any[]) => {
         onLoading.value = false;
         if (!res || !res.length) {
