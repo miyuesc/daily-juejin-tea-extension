@@ -19,7 +19,8 @@ export default defineConfig(({ mode }) => {
       }),
     ],
     build: {
-      // emptyOutDir: mode == 'production',
+      minify: false,
+      emptyOutDir: true,
     },
   };
 });

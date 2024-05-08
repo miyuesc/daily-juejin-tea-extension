@@ -1,6 +1,7 @@
 import {
   addActionClickListener,
   addRuntimeMsgListener,
+  fireTabsMsgListener,
   initMessageBus,
 } from "@/core/utils/messageBus";
 import {
@@ -9,20 +10,14 @@ import {
   processJuejinPostTabs,
   processShortLink,
 } from "@/core/utils/functions";
-import { getPanelStatus, setPanelStatus } from "@/core/store";
 
-console.log(chrome);
+let newStatus = true;
 
 // /////////// 侧边栏显示控制
-const toggleTab = async (tab?: chrome.tabs.Tab) => {
-  const newStatus = !getPanelStatus();
-  await chrome.tabs?.sendMessage(tab!.id!, {
-    action: "toggle",
-    body: newStatus,
-  });
-  setPanelStatus(newStatus);
+export const toggleTab = () => {
+  fireTabsMsgListener("toggle", newStatus);
+  newStatus = !newStatus;
 };
-// chrome.action.onClicked.addListener(toggleTab);
 addActionClickListener(toggleTab);
 
 // ///////////////////////// 消息事件

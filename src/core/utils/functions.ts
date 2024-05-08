@@ -79,7 +79,6 @@ export const getStorage = async (request: any, sendResponse: any) => {
   const { key } = request.body || {};
   const fullKey = `${storagePrefix}-${key}`;
   const result = await chrome.storage.local.get([fullKey]);
-  console.log("Value currently is ", fullKey, result[fullKey]);
   sendResponse(result[fullKey]);
 };
 
@@ -89,7 +88,6 @@ export const setStorage = async (request: any, sendResponse: any) => {
     for (const bodyKey in request.body) {
       newStorageData[`${storagePrefix}-${bodyKey}`] = request.body[bodyKey];
     }
-    console.log(newStorageData);
     await chrome.storage.local.set(newStorageData);
   }
   sendResponse();

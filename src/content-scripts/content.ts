@@ -2,7 +2,11 @@ import { createApp, App } from "vue";
 import appVue from "../app/App.vue";
 import { setPanelStatus } from "@/core/store";
 import "@/assets/styles/app.scss";
-import { addRuntimeMsgListener, initMessageBus } from "@/core/utils/messageBus";
+import {
+  addRuntimeMsgListener,
+  initMessageBus,
+  MsgListener,
+} from "@/core/utils/messageBus";
 
 let app: null | App = null;
 
@@ -27,10 +31,9 @@ export const toggle = (visible: boolean) => {
   setPanelStatus(visible);
 };
 
-const toggleListener = (request: any) => {
-  if (request.action === "toggle") {
-    toggle(request.body);
-  }
+const toggleListener: MsgListener = (request: any, _, sendResponse) => {
+  toggle(request.body);
+  sendResponse(request.body);
 };
 
 addRuntimeMsgListener("toggle", toggleListener);

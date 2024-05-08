@@ -8,7 +8,7 @@ export const createShortLink = async (originUrl: string) => {
       `${baseUrl}/v1/link/create`,
       {},
       {
-        apikey: "",
+        apikey: "26bd768def862c254bdc93f1eadc3859",
         origin_url: originUrl,
         report: true,
         webhook: true,

@@ -4,7 +4,7 @@ export type MsgListener = (
   sendResponse: (response?: any) => void,
 ) => void;
 
-export const runtimeListenersMap: Record<string, MsgListener[]> = {};
+export const runtimeListenersMap: Record<string, MsgListener> = {};
 export type RuntimeMsg = {
   action: keyof typeof runtimeListenersMap;
   body?: unknown;
@@ -13,79 +13,60 @@ export type RuntimeMsg = {
 export const addRuntimeMsgListener = (
   action: string,
   listener: MsgListener,
+  override?: boolean,
 ) => {
   if (!runtimeListenersMap[action]) {
-    runtimeListenersMap[action] = [];
+    runtimeListenersMap[action] = listener;
+    return;
   }
-  runtimeListenersMap[action].push(listener);
+  override && (runtimeListenersMap[action] = listener);
 };
-export const fireRuntimeMsgListener = <T>(
+export const fireRuntimeMsgListener = async <T>(
   action: RuntimeMsg["action"],
   body: RuntimeMsg["body"],
   callback?: (res: T) => void,
 ) => {
   if (!chrome?.runtime?.sendMessage) return;
-  chrome.runtime.sendMessage({ action, body }, (response) => {
-    const res = callback?.(response);
-    return res || true;
-  });
+  const response = await chrome.runtime.sendMessage({ action, body });
+  callback?.(response);
 };
-export const removeRuntimeMsgListener = (
-  action: string,
-  listener?: MsgListener,
-) => {
+export const removeRuntimeMsgListener = (action: string) => {
   if (!runtimeListenersMap[action]) return;
-  if (!listener) return (runtimeListenersMap[action] = []);
-  runtimeListenersMap[action] = runtimeListenersMap[action].filter(
-    (fc) => fc === listener,
-  );
+  delete runtimeListenersMap[action];
 };
 
-export type TabsMsg = {
-  action: keyof typeof tabsListenersMap;
-  body?: unknown;
-};
-export const tabsListenersMap: Record<string, MsgListener[]> = {};
-export const addTabsMsgListener = (action: string, listener: MsgListener) => {
-  if (!tabsListenersMap[action]) {
-    tabsListenersMap[action] = [];
-  }
-  tabsListenersMap[action].push(listener);
-};
-export const fireTabsMsgListener = <T>(
-  msg: TabsMsg,
+export const fireTabsMsgListener = async <T>(
+  action: RuntimeMsg["action"],
+  body: RuntimeMsg["body"],
   callback?: (res: T) => void,
 ) => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id!, msg, (response) => {
-      const res = callback?.(response);
-      return res || true;
-    });
-  });
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const response = await chrome.tabs.sendMessage(tab.id!, { action, body });
+  callback?.(response);
 };
 
 //
-export type ActionClickListener = (
-  tab: chrome.tabs.Tab,
-) => Promise<unknown> | undefined;
-export const ActionClickListeners: ActionClickListener[] = [];
+export type ActionClickListener = (tab: chrome.tabs.Tab) => unknown | undefined;
+export const actionClickListeners: ActionClickListener[] = [];
 export const addActionClickListener = (listener: ActionClickListener) => {
-  ActionClickListeners.push(listener);
+  actionClickListeners.push(listener);
 };
 
 export const initMessageBus = () => {
   chrome.runtime?.onMessage.addListener(
     (message: RuntimeMsg, sender, sendResponse) => {
       if (runtimeListenersMap[message.action]) {
-        runtimeListenersMap[message.action].forEach((fc) =>
-          fc(message, sender, sendResponse),
-        );
+        runtimeListenersMap[message.action]?.(message, sender, sendResponse);
       } else {
         sendResponse(null);
       }
+      return true;
     },
   );
   chrome.action?.onClicked.addListener((tab) => {
-    ActionClickListeners.forEach(async (fc) => await fc(tab));
+    for (const actionClickListener of actionClickListeners) {
+      actionClickListener(tab);
+    }
+    return true;
   });
 };

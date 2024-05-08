@@ -204,7 +204,7 @@ const modelForm = ref<Record<"link" | "content" | "type", string>>({
 const getTabsInfo = () => {
   hasSuccess.value = false;
   onLoading.value = true;
-  fireRuntimeMsgListener("getTabsInfo", undefined, (res: ProcessTabsResult) => {
+  fireRuntimeMsgListener("getTabsInfo", "", (res: ProcessTabsResult) => {
     jjForm.value.links = res.links;
     onLoading.value = false;
   });
@@ -219,7 +219,6 @@ const removeLinkItem = (idx: number) => {
 };
 
 const changeStorage = (value: string) => {
-  console.log({ "message-type": value });
   fireRuntimeMsgListener("setStorage", { "message-type": value });
 };
 
@@ -328,7 +327,6 @@ const copyToClipboard = async (type: "text" | "table") => {
 };
 
 const closePanel = () => {
-  // fireRuntimeMsgListener("toggle", { action: "toggle" });
   toggle(false);
 };
 </script>
