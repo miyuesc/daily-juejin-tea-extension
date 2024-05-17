@@ -66,7 +66,6 @@
       <modal
         v-model:visible="modelVisible"
         title="下午茶"
-        width="60vw"
         :footer="false"
         :render-to-body="false"
       >
@@ -112,10 +111,14 @@
       <modal
         v-model:visible="modelSummaryVisible"
         title="每日掘金文章内容"
+        width="80vw"
         :render-to-body="false"
         :footer="false"
       >
-        <pre>{{ summaryContent }}</pre>
+        <pre style="max-height: 80vh">{{ summaryContent }}</pre>
+        <div class="form-footer align-right">
+          <div class="a-button" @click="copyToClipboard('summary')">复制</div>
+        </div>
       </modal>
 
       <modal
