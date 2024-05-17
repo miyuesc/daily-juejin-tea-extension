@@ -66,41 +66,56 @@
       <modal
         v-model:visible="modelVisible"
         title="下午茶"
+        width="60vw"
         :footer="false"
         :render-to-body="false"
       >
-        <pre>{{ afternoonTeaContent.header }}</pre>
-        <pre v-if="afternoonTeaContent.post">{{
-          `【每日掘金】\n${afternoonTeaContent.post}`
-        }}</pre>
-        <div v-else>
-          <a-button type="text" @click="openFormModel('post')"
-            >插入每日掘金文章</a-button
-          >
-        </div>
-        <pre
-          v-if="
-            afternoonTeaContent.activities &&
-            afternoonTeaContent.activities.length
-          "
-          >{{
-            `【近期活动】\n${(afternoonTeaContent.activities || []).join("\n")}`
-          }}</pre
-        >
-        <div>
-          <a-button type="text" @click="openFormModel('activity')"
-            >插入活动消息</a-button
-          >
-        </div>
-        <pre>{{ afternoonTeaContent.body }}</pre>
-        <div class="form-footer align-right">
-          <div class="a-button" @click="copyToClipboard('text')">
-            复制文本信息
+        <spin :loading="onSummaryLoading">
+          <pre>{{ afternoonTeaContent.header }}</pre>
+          <pre v-if="afternoonTeaContent.post">{{
+            `【每日掘金】\n${afternoonTeaContent.post}`
+          }}</pre>
+          <div v-else>
+            <a-button type="text" @click="openFormModel('post')"
+              >插入每日掘金文章</a-button
+            >
           </div>
-          <div class="a-button" @click="copyToClipboard('table')">
-            复制到飞书
+          <pre
+            v-if="
+              afternoonTeaContent.activities &&
+              afternoonTeaContent.activities.length
+            "
+            >{{
+              `【近期活动】\n${(afternoonTeaContent.activities || []).join("\n")}`
+            }}</pre
+          >
+          <div>
+            <a-button type="text" @click="openFormModel('activity')"
+              >插入活动消息</a-button
+            >
           </div>
-        </div>
+          <pre>{{ afternoonTeaContent.body }}</pre>
+          <div class="form-footer align-right">
+            <div class="a-button" @click="copyToClipboard('text')">
+              复制文本信息
+            </div>
+            <div class="a-button" @click="copyToClipboard('table')">
+              复制到飞书
+            </div>
+            <div class="a-button" @click="generateSummaryContent">
+              生成每日掘金文章内容
+            </div>
+          </div>
+        </spin>
+      </modal>
+
+      <modal
+        v-model:visible="modelSummaryVisible"
+        title="每日掘金文章内容"
+        :render-to-body="false"
+        :footer="false"
+      >
+        <pre>{{ summaryContent }}</pre>
       </modal>
 
       <modal
@@ -159,10 +174,11 @@ import "@arco-design/web-vue/es/icon-component/style/css.js";
 import { toggle } from "@/content-scripts/content";
 import { fireRuntimeMsgListener } from "@/core/utils/messageBus";
 import {
+  typeOps,
   messageBody,
-  messageGenerator,
   messageHeader,
   tableContentGenerator,
+  articleContent,
 } from "@/core/utils/template";
 import { setClipboardText } from "@/core/utils/tools";
 
@@ -173,22 +189,17 @@ import type {
   ProcessTabsResult,
 } from "@/types";
 
-const typeOps = [
-  { label: "前端", value: "frontend" },
-  { label: "后端", value: "backend" },
-  { label: "移动端", value: "mobileend" },
-  { label: "人工智能", value: "ai" },
-];
-
 const jjForm = ref<JJForm>({
   type: "frontend",
   links: [],
 });
 const onLoading = ref(false);
+const onFormLoading = ref(false);
+const onSummaryLoading = ref(false);
 const hasSuccess = ref(false);
 const modelVisible = ref(false);
 const modelFormVisible = ref(false);
-const onFormLoading = ref(false);
+const modelSummaryVisible = ref(false);
 const afternoonTeaContent = ref<JJTeaContent>({
   header: "",
   body: "",
@@ -200,7 +211,17 @@ const modelForm = ref<Record<"link" | "content" | "type", string>>({
   link: "",
   content: "",
 });
+const summaryContent = ref("");
 
+// 分类控制
+const changeStorage = (value: string) => {
+  fireRuntimeMsgListener("setStorage", { "message-type": value });
+};
+fireRuntimeMsgListener("getStorage", { key: "message-type" }, (res: any) => {
+  jjForm.value.type = res || "frontend";
+});
+
+// 标签页信息
 const getTabsInfo = () => {
   hasSuccess.value = false;
   onLoading.value = true;
@@ -209,7 +230,7 @@ const getTabsInfo = () => {
     onLoading.value = false;
   });
 };
-
+// 移除某个标签页
 const removeLinkItem = (idx: number) => {
   Modal.warning({
     title: "删除该链接？",
@@ -218,14 +239,7 @@ const removeLinkItem = (idx: number) => {
   });
 };
 
-const changeStorage = (value: string) => {
-  fireRuntimeMsgListener("setStorage", { "message-type": value });
-};
-
-fireRuntimeMsgListener("getStorage", { key: "message-type" }, (res: any) => {
-  jjForm.value.type = res || "frontend";
-});
-
+// 短链生成
 const generateShortLink = async () => {
   try {
     onLoading.value = true;
@@ -235,7 +249,7 @@ const generateShortLink = async () => {
       (res: any[]) => {
         onLoading.value = false;
         if (!res || !res.length) {
-          return Notification.error("请求异常");
+          return Notification.error("短链请求异常");
         }
         for (let i = 0; i < res.length; i++) {
           const data = res[i];
@@ -253,6 +267,31 @@ const generateShortLink = async () => {
   }
 };
 
+// 总结内容生成
+const generateSummaryContent = () => {
+  onSummaryLoading.value = true;
+  const { links, type } = jjForm.value;
+  fireRuntimeMsgListener(
+    "generateSummary",
+    links.map((i) => i.link),
+    async (res: string[]) => {
+      if (!res || !res.length) {
+        return Notification.error("总结请求异常");
+      }
+      for (let i = 0; i < res.length; i++) {
+        jjForm.value.links[i].summary = res[i];
+      }
+
+      summaryContent.value = articleContent(type, links);
+      console.log(summaryContent.value);
+
+      modelSummaryVisible.value = true;
+      onSummaryLoading.value = false;
+    },
+  );
+};
+
+// 下午茶内容生成
 const generatorTeaContent = () => {
   const { type, links } = jjForm.value;
   afternoonTeaContent.value.header = messageHeader(type);
@@ -260,6 +299,7 @@ const generatorTeaContent = () => {
   modelVisible.value = true;
 };
 
+// 内容插入
 const openFormModel = (type: string) => {
   modelForm.value = { link: "", content: "", type };
   modelFormVisible.value = true;
@@ -301,19 +341,21 @@ const setMessagePart = () => {
   modelFormVisible.value = false;
 };
 
-const copyToClipboard = async (type: "text" | "table") => {
+// 复制
+const copyToClipboard = async (type: "text" | "table" | "summary") => {
   const { header, activities, post, body } = afternoonTeaContent.value;
   let text = "";
   if (type === "table") {
     text = tableContentGenerator(jjForm.value.links as Required<LinkItem>[]);
-  }
-  if (type === "text") {
+  } else if (type === "text") {
     text = `${header}\n`;
     post && (text += `【每日掘金】\n${post}\n`);
     activities &&
       activities.length &&
       (text += `【近期活动】\n${(activities || []).join("\n")}\n`);
     text += body;
+  } else {
+    text = summaryContent.value;
   }
 
   await setClipboardText(text);

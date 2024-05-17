@@ -2,6 +2,7 @@ export type LinkItem = {
   title: string;
   link: string;
   shortLink?: string;
+  summary?: string;
 };
 export type JJForm = {
   type: "frontend" | "backend" | "mobileend" | "ai";

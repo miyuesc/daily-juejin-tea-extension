@@ -23,6 +23,7 @@
   "permissions": ["activeTab", "tabs", "webRequest", "clipboardWrite", "storage"],
   "host_permissions": [
     "https://api.juejin.cn/*",
+    "https://api.coze.com/*",
     "https://api.xiaomark.com/*"
   ],
   "manifest_version": 3

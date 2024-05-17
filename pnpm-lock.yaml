@@ -8,9 +8,6 @@ dependencies:
   '@arco-design/web-vue':
     specifier: ^2.55.1
     version: 2.55.1(vue@3.4.26)
-  echarts:
-    specifier: ^5.5.0
-    version: 5.5.0
   vue:
     specifier: ^3.4.26
     version: 3.4.26(typescript@5.4.5)
@@ -25,9 +22,6 @@ devDependencies:
   '@vitejs/plugin-vue':
     specifier: ^4.6.2
     version: 4.6.2(vite@4.5.3)(vue@3.4.26)
-  consola:
-    specifier: ^3.2.3
-    version: 3.2.3
   sass:
     specifier: ^1.76.0
     version: 1.76.0
@@ -571,11 +565,6 @@ packages:
     resolution: {integrity: sha512-7CEBgcMjVmitjYo5q8JTJVra6X5mQ20uTThdK+0kR7UEaDrAWEQcRiBtWJzga4eRpP6afNwwLsX2SET2JhVB1Q==}
     dev: true
 
-  /consola@3.2.3:
-    resolution: {integrity: sha512-I5qxpzLv+sJhTVEoLYNcTW+bThDCPsit0vLNKShZx6rLtpilNpmmeTPaeqJb9ZE9dV3DGaeby6Vuhrw38WjeyQ==}
-    engines: {node: ^14.18.0 || >=16.10.0}
-    dev: true
-
   /console@0.7.2:
     resolution: {integrity: sha512-+JSDwGunA4MTEgAV/4VBKwUHonP8CzJ/6GIuwPi6acKFqFfHUdSGCm89ZxZ5FfGWdZfkdgAroy5bJ5FSeN/t4g==}
     dev: true
@@ -605,13 +594,6 @@ packages:
       no-case: 3.0.4
       tslib: 2.6.2
     dev: true
-
-  /echarts@5.5.0:
-    resolution: {integrity: sha512-rNYnNCzqDAPCr4m/fqyUFv7fD9qIsd50S6GDFgO1DxZhncCsNsG7IfUlAlvZe5oSEQxtsjnHiUuppzccry93Xw==}
-    dependencies:
-      tslib: 2.3.0
-      zrender: 5.5.0
-    dev: false
 
   /entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
@@ -926,10 +908,6 @@ packages:
       is-number: 7.0.0
     dev: true
 
-  /tslib@2.3.0:
-    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
-    dev: false
-
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
     dev: true
@@ -1074,9 +1052,3 @@ packages:
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
     dev: true
-
-  /zrender@5.5.0:
-    resolution: {integrity: sha512-O3MilSi/9mwoovx77m6ROZM7sXShR/O/JIanvzTwjN3FORfLSr81PsUGd7jlaYOeds9d8tw82oP44+3YucVo+w==}
-    dependencies:
-      tslib: 2.3.0
-    dev: false

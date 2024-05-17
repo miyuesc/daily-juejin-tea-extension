@@ -11,6 +11,7 @@ import {
 let app: null | App = null;
 
 export const toggle = (visible: boolean) => {
+  setPanelStatus(visible);
   if (!visible) {
     app && app.unmount();
     app = null;
@@ -28,7 +29,6 @@ export const toggle = (visible: boolean) => {
     app.mount("#__crx-app");
     document.body.style.overflowY = "hidden";
   }
-  setPanelStatus(visible);
 };
 
 const toggleListener: MsgListener = (request: any, _, sendResponse) => {

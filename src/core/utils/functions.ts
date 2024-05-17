@@ -1,6 +1,7 @@
 import { Notification } from "@arco-design/web-vue";
 import { createShortLink } from "@/core/requests/xiaoma";
 import { ProcessTabsCallback } from "@/types";
+import { createArticleSummary } from "@/core/requests/coze";
 
 export const storagePrefix = "jj-helper";
 
@@ -42,6 +43,24 @@ export const processShortLink = async (request: any, sendResponse: any) => {
     const resArray = [];
     for (const linkItem of request.body) {
       const res = await createShortLink(linkItem.link);
+      resArray.push(res);
+    }
+    sendResponse(resArray);
+  } catch (e) {
+    console.error(e);
+    sendResponse(null);
+  }
+};
+
+export const processSummary = async (request: any, sendResponse: any) => {
+  try {
+    const resArray = [];
+    for (const linkItem of request.body) {
+      const id = linkItem.split("/").at(-1);
+      const { messages = [] } = await createArticleSummary(id);
+
+      const res = messages.find((i: any) => i.type === "answer")?.content || "";
+
       resArray.push(res);
     }
     sendResponse(resArray);

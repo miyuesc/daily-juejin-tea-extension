@@ -9,14 +9,15 @@ import {
   setStorage,
   processJuejinPostTabs,
   processShortLink,
+  processSummary,
 } from "@/core/utils/functions";
-
-let newStatus = true;
+import { getPanelStatus, setPanelStatus } from "@/core/store";
 
 // /////////// 侧边栏显示控制
 export const toggleTab = () => {
-  fireTabsMsgListener("toggle", newStatus);
-  newStatus = !newStatus;
+  const status = getPanelStatus();
+  fireTabsMsgListener("toggle", status);
+  setPanelStatus(!status);
 };
 addActionClickListener(toggleTab);
 
@@ -27,6 +28,10 @@ addRuntimeMsgListener("getTabsInfo", (request, sender, sendResponse) => {
 
 addRuntimeMsgListener("generateShortLink", (request, sender, sendResponse) => {
   processShortLink(request, sendResponse);
+});
+
+addRuntimeMsgListener("generateSummary", (request, sender, sendResponse) => {
+  processSummary(request, sendResponse);
 });
 
 addRuntimeMsgListener("getStorage", (request, sender, sendResponse) => {

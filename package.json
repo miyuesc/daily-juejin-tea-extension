@@ -8,14 +8,12 @@
   },
   "dependencies": {
     "@arco-design/web-vue": "^2.55.1",
-    "echarts": "^5.5.0",
     "vue": "^3.4.26"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.240",
     "@types/node": "^20.12.8",
     "@vitejs/plugin-vue": "^4.6.2",
-    "consola": "^3.2.3",
     "sass": "^1.76.0",
     "typescript": "^5.4.5",
     "vite": "^4.5.3",

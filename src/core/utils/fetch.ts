@@ -19,7 +19,8 @@ export const fetchGet = async (url: string, params: FetchParams = {}) => {
 export const fetchPost = async (
   url: string,
   params: FetchParams = {},
-  data?: unknown,
+  data: unknown,
+  headers = {},
 ) => {
   const firstUrl = url;
   let paramsUrl = "?";
@@ -30,6 +31,7 @@ export const fetchPost = async (
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...headers,
     },
     credentials: "include",
     mode: "cors",
