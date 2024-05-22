@@ -12,15 +12,25 @@
     "service_worker": "./background/worker.ts",
     "type": "module"
   },
-  "content_scripts": [{
-    "matches": ["https://juejin.cn/**"],
-    "js": [ "content-scripts/content.ts"]
-  }],
-  "web_accessible_resources": [{
-    "matches": ["https://juejin.cn/*"],
-    "resources": ["assets/*"]
-  }],
-  "permissions": ["activeTab", "tabs", "webRequest", "clipboardWrite", "storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://juejin.cn/**"],
+      "js": ["content-scripts/content.ts"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": ["https://juejin.cn/*"],
+      "resources": ["assets/*"]
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "webRequest",
+    "clipboardWrite",
+    "storage"
+  ],
   "host_permissions": [
     "https://api.juejin.cn/*",
     "https://api.coze.com/*",

@@ -1,27 +1,38 @@
-import { fetchPost } from "@/core/utils/fetch";
+import { fetchPost } from '@/core/utils/fetch'
 
-const baseUrl = "https://api.juejin.cn";
+const baseUrl = 'https://api.juejin.cn'
 
-export const getCreatorJPowerHistory = async (userId?: string | null) => {
+function request(id: string) {
+  return fetchPost(
+    `${baseUrl}/content_api/v1/article/detail`,
+    {},
+    { article_id: id, need_theme: false },
+  )
+}
+
+export async function getArticleContent(id: string) {
   try {
-    return await fetchPost(
-      `${baseUrl}/growth_api/v1/user_growth/author_jpower_detail`,
-      { aid: 2608, uuid: "", spider: 0 },
-      { cursor: "0", limit: 30 },
-    );
-  } catch (error) {
-    throw new Error("Request Failed");
-  }
-};
+    let idx: number = 0
+    let success = false
+    let res: string = ''
 
-export const getCreatorDataCards = async (datas: string[], userId: string) => {
-  try {
-    return await fetchPost(
-      `${baseUrl}/growth_api/v1/user_growth/author_jpower_detail`,
-      { aid: 2608, uuid: "", spider: 0 },
-      { datas, user_id: userId },
-    );
-  } catch (error) {
-    throw new Error("Request Failed");
+    while (!success) {
+      if (idx > 5)
+        return null
+
+      const data = await request(id)
+      success = data.err_no === 0
+
+      if (success) {
+        res = data.data?.article_info.mark_content || ''
+        return res
+      }
+
+      idx++
+    }
   }
-};
+  catch (error) {
+    console.error(error)
+    return null
+  }
+}

@@ -1,46 +1,47 @@
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import type { PropType } from 'vue'
+import { computed } from 'vue'
 
-type ButtonType = "primary" | "default" | "warning" | "error" | "info";
-type ButtonSize = "mini" | "small" | "medium" | "big";
+type ButtonType = 'primary' | 'default' | 'warning' | 'error' | 'info'
+type ButtonSize = 'mini' | 'small' | 'medium' | 'big'
 
 const props = defineProps({
   type: {
     type: String as PropType<ButtonType>,
-    default: "primary",
+    default: 'primary',
   },
   size: {
     type: String as PropType<ButtonSize>,
-    default: "medium",
+    default: 'medium',
   },
   disabled: {
     type: Boolean as PropType<boolean>,
     default: false,
   },
-});
+})
 
-const emits = defineEmits(["click"]);
+const emits = defineEmits(['click'])
 
 const classes = computed(() => {
-  let classes: string = "x-button";
-  classes += ` x-button-${props.type}`;
-  classes += ` x-button-${props.size}`;
-  props.disabled && (classes += ` x-button-disabled`);
+  let classes: string = 'x-button'
+  classes += ` x-button-${props.type}`
+  classes += ` x-button-${props.size}`
+  props.disabled && (classes += ` x-button-disabled`)
 
-  return classes;
-});
+  return classes
+})
 
-const buttonClick = () => {
-  if (props.disabled) {
-    return;
-  }
-  emits("click");
-};
+function buttonClick() {
+  if (props.disabled)
+    return
+
+  emits('click')
+}
 </script>
 
 <template>
   <div :class="classes" @click="buttonClick">
-    <slot></slot>
+    <slot />
   </div>
 </template>
 

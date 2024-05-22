@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { computed, PropType } from "vue";
-import XButton from "./XButton.vue";
+import type { PropType } from 'vue'
+import { computed } from 'vue'
+import XButton from './XButton.vue'
 
-type CheckboxValue = string | boolean | number;
-type CheckboxValues = CheckboxValue[];
+type CheckboxValue = string | boolean | number
+type CheckboxValues = CheckboxValue[]
 
-type CheckboxOption = {
-  label: string;
-  value: CheckboxValue;
-};
-type CheckboxOptions = CheckboxOption[];
+interface CheckboxOption {
+  label: string
+  value: CheckboxValue
+}
+type CheckboxOptions = CheckboxOption[]
 
 const props = defineProps({
   value: {
@@ -30,48 +31,49 @@ const props = defineProps({
     type: Boolean as PropType<boolean>,
     default: false,
   },
-});
+})
 
-const emits = defineEmits(["update:value"]);
+const emits = defineEmits(['update:value'])
 
 const computedValue = computed({
   get: () => props.value,
   set: (value: CheckboxValue | CheckboxValues) => {
-    emits("update:value", value);
+    emits('update:value', value)
   },
-});
+})
 
-const computedButtonType = (op: CheckboxOption) => {
+function computedButtonType(op: CheckboxOption) {
   if (props.multiple) {
     return (computedValue.value as CheckboxValues).includes(op.value)
-      ? "primary"
-      : "default";
+      ? 'primary'
+      : 'default'
   }
-  return computedValue.value === op.value ? "primary" : "default";
-};
+  return computedValue.value === op.value ? 'primary' : 'default'
+}
 
-const changeCheckedValue = (op: CheckboxOption) => {
+function changeCheckedValue(op: CheckboxOption) {
   if (!props.multiple) {
-    computedValue.value = op.value;
-    return;
+    computedValue.value = op.value
+    return
   }
   if (!computedValue.value || !(computedValue.value as CheckboxValues).length) {
-    computedValue.value = [op.value];
-    return;
+    computedValue.value = [op.value]
+    return
   }
   if ((computedValue.value as CheckboxValues).includes(op.value)) {
     computedValue.value = (computedValue.value as CheckboxValues).filter(
-      (i) => i !== op.value,
-    );
-  } else {
-    (computedValue.value as CheckboxValues).push(op.value);
+      i => i !== op.value,
+    )
   }
-};
+  else {
+    (computedValue.value as CheckboxValues).push(op.value)
+  }
+}
 </script>
 
 <template>
   <div class="x-checkbox-button-group">
-    <x-button
+    <XButton
       v-for="(op, idx) in options"
       :key="idx"
       :disabled="disabled"
@@ -79,7 +81,7 @@ const changeCheckedValue = (op: CheckboxOption) => {
       @click="changeCheckedValue(op)"
     >
       {{ op.label }}
-    </x-button>
+    </XButton>
   </div>
 </template>
 

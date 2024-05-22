@@ -1,43 +1,47 @@
 <script lang="ts" setup>
-import { computed, PropType } from "vue";
+import type { PropType } from 'vue'
+import { computed } from 'vue'
+
 const props = defineProps({
   label: {
     type: String,
-    default: "",
+    default: '',
   },
   description: {
     type: String,
-    default: "",
+    default: '',
   },
   align: {
-    type: String as PropType<"horizontal" | "vertical">,
-    default: "horizontal",
+    type: String as PropType<'horizontal' | 'vertical'>,
+    default: 'horizontal',
   },
   textAlign: {
     type: String,
-    default: "right",
-    validator: (val: string) => ["left", "center", "right"].includes(val),
+    default: 'right',
+    validator: (val: string) => ['left', 'center', 'right'].includes(val),
   },
   labelWidth: {
     type: Number,
     default: 80,
   },
-});
+})
 
 const computedStyles = computed(() => {
   return {
-    "--label-width": `${props.labelWidth}px`,
-    "--text-align": props.textAlign as "center",
-    "--el-align": props.align === "vertical" ? "column" : "row",
-  };
-});
+    '--label-width': `${props.labelWidth}px`,
+    '--text-align': props.textAlign as 'center',
+    '--el-align': props.align === 'vertical' ? 'column' : 'row',
+  }
+})
 </script>
 
 <template>
   <div class="edit-item" :style="computedStyles">
-    <div class="edit-item_label">{{ label }}：</div>
+    <div class="edit-item_label">
+      {{ label }}：
+    </div>
     <div class="edit-item_content">
-      <slot></slot>
+      <slot />
       <div v-if="!!description" class="edit-item_description">
         <span>{{ description }}</span>
         <slot name="description" />
