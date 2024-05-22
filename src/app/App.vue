@@ -24,7 +24,6 @@ import type {
   ProcessTabsResult,
 } from '@/types'
 
-import { toggle } from '@/content-scripts/content'
 import { fireRuntimeMsgListener } from '@/core/utils/messageBus'
 import {
   articleContent,
@@ -132,15 +131,15 @@ async function generateShortLink() {
 
 // 总结内容生成
 async function generateSummaryContent() {
+  modelSummaryVisible.value = true
   onSummaryLoading.value = true
-  const { links } = jjForm.value
 
+  const { links } = jjForm.value
   const contents: string[] = []
 
   for (const linkItem of links) {
     const id = linkItem.link.split('/').at(-1) as string
     const data = await getArticleContent(id)
-
     linkItem.content = data || ''
     contents.push(data!)
   }
@@ -271,20 +270,16 @@ async function copyToClipboard(type: 'text' | 'table' | 'summary') {
     )
   }
 }
-
-function closePanel() {
-  toggle(false)
-}
 </script>
 
 <template>
-  <div class="crx-jj-mask" @click="closePanel">
+  <div class="crx-jj-mask">
     <div class="crx-jj-container" @click.stop>
       <Spin :loading="onLoading" dot style="width: 100%">
         <PageHeader
+          :show-back="false"
           title="每日掘金"
           subtitle="掘金酱的下午茶"
-          @back="closePanel"
         />
         <form :model="jjForm" class="jj-tea-form">
           <FormItem label="分类">
@@ -331,13 +326,18 @@ function closePanel() {
                   <IconRefresh v-show="!link.shortLink" @click="reloadShortLink(idx)" />
                 </template>
               </ListItem>
-              <template #footer>
+              <template
+                v-if="hasSuccess && jjForm.links.length"
+                #footer
+              >
                 <div
-                  v-if="hasSuccess"
                   class="a-button a-button-long"
                   @click="generatorTeaContent"
                 >
                   生成下午茶消息
+                </div>
+                <div class="a-button a-button-long" @click="generateSummaryContent">
+                  生成每日掘金文章内容
                 </div>
               </template>
             </List>
@@ -379,9 +379,6 @@ function closePanel() {
             <div class="a-button" @click="copyToClipboard('table')">
               复制到飞书
             </div>
-            <div class="a-button" @click="generateSummaryContent">
-              生成每日掘金文章内容
-            </div>
           </div>
         </Spin>
       </Modal>
@@ -421,8 +418,8 @@ function closePanel() {
         :footer="false"
       >
         <Spin :loading="onSummaryLoading" dot>
-          <div style="max-height: 80vh">
-            <List style="width: 100%; padding-bottom: 20px" size="small">
+          <div style="max-height: 80vh; overflow-y: auto;">
+            <List style="width: 100%;" size="small">
               <template #header>
                 <h3>{{ typeOps.find(i => i.value === jjForm.type)?.label }}</h3>
               </template>
@@ -440,7 +437,7 @@ function closePanel() {
               </ListItem>
             </List>
           </div>
-          <div class="form-footer align-right">
+          <div class="form-footer align-right" style="padding-top: 20px">
             <div class="a-button" @click="copyToClipboard('summary')">
               复制
             </div>
